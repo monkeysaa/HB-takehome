@@ -48,12 +48,12 @@ class Shape():
 class Canvas():
     """A rectangular shape on which to draw ASCII art."""
 
-    def __init__(self, height, width):
+    def __init__(self, height, width, fill_char = ' '):
         "Declare a canvas object with the given dimensions."
 
         self.height = height
         self.width = width
-        self.fill_char = '.'
+        self.fill_char = fill_char
 
         # A dictionary of lists -- each with chars for one line of Canvas
         self.contents = {}
@@ -68,7 +68,7 @@ class Canvas():
 
         self.clear_canvas()
     
-    
+
     def as_string(self):
 
         response_str = ''

@@ -3,14 +3,13 @@ import model
 
 class TestStringMethods(unittest.TestCase):
     def setUp(self):
-        self.small_canvas = model.Canvas(2, 3)
-        self.small_canvas.fill_char = '.'
+        self.small_canvas = model.Canvas(2, 3, '.')
 
         self.shape = model.Shape(3, 5, 1, 2)
         self.wide = model.Shape(1, 9, 0, 1, '+')
         self.tall = model.Shape(1, 1, 1, 20, '@')
 
-        self.filled_canvas = model.Canvas(4, 5)
+        self.filled_canvas = model.Canvas(4, 5, '.')
         self.filled_canvas.fill_char = '.'
         self.filled_canvas.add_shape(self.shape)
         self.filled_canvas.add_shape(self.wide)
@@ -34,6 +33,13 @@ class TestStringMethods(unittest.TestCase):
 
         self.assertEqual(self.small_canvas.contents[0], ['-', '-', '-'])
         self.assertEqual(self.small_canvas.contents[1], ['-', '-', '-'])
+
+        expected_result = (
+            "---\n"
+            "---\n"
+        )
+        self.assertEqual(self.small_canvas.as_string(), expected_result)
+
 
 
     def test_add_shape(self):
@@ -63,25 +69,99 @@ class TestStringMethods(unittest.TestCase):
 
 
     def test_basic_integration(self):
+        """Test end-to-end from creating Canvas to adding multiple Shapes."""
 
+        self.new_canvas = model.Canvas(4, 5, '.')
+        expected_result = (
+            ".....\n"
+            ".....\n"
+            ".....\n"
+            ".....\n"
+        )
+        self.assertEqual(self.new_canvas.as_string(), expected_result)
+
+        self.new_canvas.fill_char = ','
+        self.new_canvas.clear_canvas()
+        updated_result = (
+            ",,,,,\n"
+            ",,,,,\n"
+            ",,,,,\n"
+            ",,,,,\n"
+        )
+        self.assertEqual(self.new_canvas.as_string(), updated_result)
+
+        self.new_canvas.add_shape(model.Shape(3, 5, 1, 2))
+        updated_result = (
+            ",,***\n"
+            ",,***\n"
+            ",,,,,\n"
+            ",,,,,\n"
+        )
+        self.assertEqual(self.new_canvas.as_string(), updated_result)
+
+
+        self.new_canvas.add_shape(model.Shape(-1, 20, -1, 1, '+'))
+        updated_result = (
+            "+++++\n"
+            ",,***\n"
+            ",,,,,\n"
+            ",,,,,\n"
+        )
+        self.assertEqual(self.new_canvas.as_string(), updated_result)
+
+
+        self.new_canvas.add_shape(model.Shape(0, 1, 1, 5, '@'))
+        updated_result = (
+            "@++++\n"
+            "@,***\n"
+            "@,,,,\n"
+            "@,,,,\n"
+        )
+        self.assertEqual(self.new_canvas.as_string(), updated_result)
+
+
+    def test_advanced_integration(self):
+        """Test end-to-end from creating Canvas to translating Shapes."""
+
+        self.new_canvas = model.Canvas(4, 5, ',')
+        self.new_canvas.add_shape(model.Shape(3, 5, 1, 2))
+        self.new_canvas.add_shape(model.Shape(-1, 20, -1, 1, '+'))
+        tall_shape = model.Shape(0, 1, 1, 5, '@')
+        self.new_canvas.add_shape(tall_shape)
+        
         expected_result = (
             "@++++\n"
-            "@.***\n"
-            "@....\n"
-            "@....\n"
+            "@,***\n"
+            "@,,,,\n"
+            "@,,,,\n"
         )
-        self.assertEqual(self.filled_canvas.as_string(), expected_result)
+        self.assertEqual(self.new_canvas.as_string(), expected_result)
 
-        #This should bring two-line *** shape in front of +++++ shape
-        self.filled_canvas.add_shape(self.shape)
+        # Shape translates from (y_start, y_end) of 1,5 to 0, 4.
+        # This still covers height of new_canvas, so no change in output 
+        self.new_canvas.translate_shape(tall_shape.coords, 'y', -1)
+        self.assertEqual(self.new_canvas.as_string(), expected_result)
+
+        # After -1 shift along y-axis, shape's new coords are (0, 1, 0, 4)
+        self.new_canvas.translate_shape((0, 1, 0, 4), 'x', 1)
+        updated_result = (
+            "@@+++\n"
+            "@@***\n"
+            "@@,,,\n"
+            "@@,,,\n"
+        )
+        self.assertEqual(self.new_canvas.as_string(), updated_result)
+
+        # #This should bring two-line *** shape in front of +++++ shape
+        self.new_canvas.add_shape(self.shape)
 
         expected_result = (
-            "@+***\n"
-            "@.***\n"
-            "@....\n"
-            "@....\n"
+            "@@***\n"
+            "@@***\n"
+            "@@,,,\n"
+            "@@,,,\n"
         )
-        self.assertEqual(self.filled_canvas.as_string(), expected_result)
+        self.assertEqual(self.new_canvas.as_string(), expected_result)
     
 
     def test_translation(self):

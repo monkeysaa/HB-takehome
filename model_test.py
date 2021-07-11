@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.6
+
 import unittest
 import model
 
@@ -38,22 +40,22 @@ class TestStringMethods(unittest.TestCase):
             "---\n"
             "---\n"
         )
-        self.assertEqual(self.small_canvas.as_string(), expected_result)
+        self.assertEqual(self.small_canvas._as_string(), expected_result)
 
 
 
     def test_add_shape(self):
-        """Check add_shape on a small canvas. Then, test as_string() method."""
+        """Check add_shape on a small canvas. Then, test _as_string() method."""
 
         self.small_canvas.add_shape(self.wide)
         self.assertEqual(self.small_canvas.contents[0], ['+', '+', '+'])
         
-        # Same test using as_string() to check result.
+        # Same test using _as_string() to check result.
         expected_result = (
             "+++\n"
             "...\n"
         )
-        self.assertEqual(self.small_canvas.as_string(), expected_result)
+        self.assertEqual(self.small_canvas._as_string(), expected_result)
 
 
     def test_add_shape2(self):
@@ -65,7 +67,7 @@ class TestStringMethods(unittest.TestCase):
             "@++\n"
             "@..\n"
         )
-        self.assertEqual(self.small_canvas.as_string(), expected_result)
+        self.assertEqual(self.small_canvas._as_string(), expected_result)
 
 
     def test_basic_integration(self):
@@ -78,7 +80,7 @@ class TestStringMethods(unittest.TestCase):
             ".....\n"
             ".....\n"
         )
-        self.assertEqual(self.new_canvas.as_string(), expected_result)
+        self.assertEqual(self.new_canvas._as_string(), expected_result)
 
         self.new_canvas.fill_char = ','
         self.new_canvas.clear_canvas()
@@ -88,7 +90,7 @@ class TestStringMethods(unittest.TestCase):
             ",,,,,\n"
             ",,,,,\n"
         )
-        self.assertEqual(self.new_canvas.as_string(), updated_result)
+        self.assertEqual(self.new_canvas._as_string(), updated_result)
 
         self.new_canvas.add_shape(model.Shape(3, 5, 1, 2))
         updated_result = (
@@ -97,7 +99,7 @@ class TestStringMethods(unittest.TestCase):
             ",,,,,\n"
             ",,,,,\n"
         )
-        self.assertEqual(self.new_canvas.as_string(), updated_result)
+        self.assertEqual(self.new_canvas._as_string(), updated_result)
 
 
         self.new_canvas.add_shape(model.Shape(-1, 20, -1, 1, '+'))
@@ -107,7 +109,7 @@ class TestStringMethods(unittest.TestCase):
             ",,,,,\n"
             ",,,,,\n"
         )
-        self.assertEqual(self.new_canvas.as_string(), updated_result)
+        self.assertEqual(self.new_canvas._as_string(), updated_result)
 
 
         self.new_canvas.add_shape(model.Shape(0, 1, 1, 5, '@'))
@@ -117,7 +119,7 @@ class TestStringMethods(unittest.TestCase):
             "@,,,,\n"
             "@,,,,\n"
         )
-        self.assertEqual(self.new_canvas.as_string(), updated_result)
+        self.assertEqual(self.new_canvas._as_string(), updated_result)
 
 
     def test_advanced_integration(self):
@@ -135,12 +137,12 @@ class TestStringMethods(unittest.TestCase):
             "@,,,,\n"
             "@,,,,\n"
         )
-        self.assertEqual(self.new_canvas.as_string(), expected_result)
+        self.assertEqual(self.new_canvas._as_string(), expected_result)
 
         # Shape translates from (y_start, y_end) of 1,5 to 0, 4.
         # This still covers height of new_canvas, so no change in output 
         self.new_canvas.translate_shape(tall_shape.coords, 'y', -1)
-        self.assertEqual(self.new_canvas.as_string(), expected_result)
+        self.assertEqual(self.new_canvas._as_string(), expected_result)
 
         # After -1 shift along y-axis, shape's new coords are (0, 1, 0, 4)
         self.new_canvas.translate_shape((0, 1, 0, 4), 'x', 1)
@@ -150,7 +152,7 @@ class TestStringMethods(unittest.TestCase):
             "@@,,,\n"
             "@@,,,\n"
         )
-        self.assertEqual(self.new_canvas.as_string(), updated_result)
+        self.assertEqual(self.new_canvas._as_string(), updated_result)
 
         # #This should bring two-line *** shape in front of +++++ shape
         self.new_canvas.add_shape(self.shape)
@@ -161,7 +163,7 @@ class TestStringMethods(unittest.TestCase):
             "@@,,,\n"
             "@@,,,\n"
         )
-        self.assertEqual(self.new_canvas.as_string(), expected_result)
+        self.assertEqual(self.new_canvas._as_string(), expected_result)
     
 
     def test_translation(self):
@@ -174,7 +176,7 @@ class TestStringMethods(unittest.TestCase):
             "@....\n"
             "@....\n"
         )
-        self.assertEqual(self.filled_canvas.as_string(), expected_result)
+        self.assertEqual(self.filled_canvas._as_string(), expected_result)
     
 
     def test_translation2(self):
@@ -187,7 +189,7 @@ class TestStringMethods(unittest.TestCase):
             "@....\n"
             "@....\n"
         )
-        self.assertFalse(self.filled_canvas.as_string() == expired_result)
+        self.assertFalse(self.filled_canvas._as_string() == expired_result)
     
 
     def test_start_point1(self):
@@ -206,7 +208,7 @@ class TestStringMethods(unittest.TestCase):
             "@....\n"
             "@....\n"
         )
-        self.assertEqual(self.filled_canvas.as_string(), expected_result)
+        self.assertEqual(self.filled_canvas._as_string(), expected_result)
 
 
     def test_start_point2(self):
@@ -223,7 +225,7 @@ class TestStringMethods(unittest.TestCase):
             "@....\n"
             "@....\n"
         )
-        self.assertFalse(self.filled_canvas.as_string() == expected_result)
+        self.assertFalse(self.filled_canvas._as_string() == expected_result)
 
 
 if __name__ == '__main__':

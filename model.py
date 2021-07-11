@@ -46,7 +46,24 @@ class Shape():
     
 
 class Canvas():
-    """A rectangular shape on which to draw ASCII art."""
+    """A rectangular shape on which to draw ASCII art.
+    
+    Attributes: 
+    - width (int): The width of the canvas, in chars
+    - height (int): The height of the canvas, in chars
+    - fill_char (str): The character for each unfilled square (for debugging)
+
+    - contents (dict): A dictionary of lists 
+                       Keys: y-value of line. Values: chars for that line
+
+    - shapes (dict): A dictionary of Shape objects currently displayed
+                     Keys: Shape coordinates (x-start, x-end, y-start, y-end). 
+                     Values: Shape object
+
+    - origin (dict): A tuple of x and y coordinates for the origin.  
+                     Origin located at the top left corner, with values 
+                     increasing down and to the right. Default set to (1, 1).
+    """
 
     def __init__(self, height, width, fill_char = ' '):
         "Declare a canvas object with the given dimensions."
@@ -55,21 +72,16 @@ class Canvas():
         self.width = width
         self.fill_char = fill_char
 
-        # A dictionary of lists -- each with chars for one line of Canvas
         self.contents = {}
-
-        # A dictionary of Shapes currently on this Canvas, 
-        #    with Shape coordinates as keys and Shape objects as values.
         self.shapes = {}
-        
-        # Origin at Top Left Corner. Values increase down and to the right.
-        # Origin set to (1, 1) but can be adjusted here.
-        self.origin = {'x': 1, 'y': 1}
+        self.origin = (1, 1)
 
         self.clear_canvas()
     
 
-    def as_string(self):
+    def _as_string(self):
+        """Returns the canvas as a string, for testing purposes."""
+
 
         response_str = ''
 
@@ -83,7 +95,7 @@ class Canvas():
     def print_canvas(self):
         """Prints the canvas and any shapes to standard output."""
 
-        print(self.as_string())
+        print(self._as_string())
     
 
     def clear_canvas(self):
@@ -113,8 +125,8 @@ class Canvas():
         if (
             shape.start_x > self.width or 
             shape.start_y > self.height or
-            shape.end_x < self.origin['x'] or 
-            shape.end_y < self.origin['y']
+            shape.end_x < self.origin[0] or 
+            shape.end_y < self.origin[1]
         ):
             return
         
@@ -126,14 +138,14 @@ class Canvas():
                     return boundary
             return value
         
-        x_start = _set_point(shape.start_x, self.origin['x'], 'min')
-        y_start = _set_point(shape.start_y, self.origin['y'], 'min')
+        x_start = _set_point(shape.start_x, self.origin[0], 'min')
+        y_start = _set_point(shape.start_y, self.origin[1], 'min')
         x_end = _set_point(shape.end_x, self.width, 'max')
         y_end = _set_point(shape.end_y, self.height, 'max')
 
         # Adjust start-points if origin set to (1, 1) or other non-zero #s
-        x_start -= self.origin['x']
-        y_start -= self.origin['y']
+        x_start -= self.origin[0]
+        y_start -= self.origin[1]
 
         for y_value in range(y_start, y_end):
             for x_value in range(x_start, x_end):
@@ -142,6 +154,9 @@ class Canvas():
 
     def translate_shape(self, former_coords, axis, num):
         """Move a shape up, down, left, or right."""
+
+        if axis not in ('x', 'y'):
+            raise TypeError('Second argument must be either \'x\' or \'y\'.')
 
         shape_to_move = self.shapes.pop(former_coords)
         shape_to_move._move_shape(axis, num)
@@ -152,7 +167,3 @@ class Canvas():
     def __repr__(self):
         return f"<Canvas ({self.height}, {self.width})>"
 
-
-# if __name__ == "__main__":
-#     import unittest
-#     doctest.testmod()
